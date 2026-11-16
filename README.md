@@ -104,6 +104,17 @@ with an 80/20 train/test split. Test results: R² = 0.576, MAE = 0.533
 (about $53,300). The model is deliberately simple because the project focuses
 on the deployment and monitoring architecture, not on model accuracy.
 
+## Retraining the model
+
+```
+pip install -r app/requirements.txt
+python app/train_model.py
+docker compose up -d --build api
+```
+
+This retrains the model, prints its R² and MAE, saves a new `app/model.joblib`,
+and rebuilds the API container so it uses the new model.
+
 ## Running the unit tests
 
 ```

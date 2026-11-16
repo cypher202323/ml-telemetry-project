@@ -1,0 +1,22 @@
+groups:
+  - name: ml-api-alerts
+    rules:
+      # Alert 1: too many requests are failing
+      - alert: HighErrorRate
+        expr: (sum(rate(api_request_errors_total[1m])) / sum(rate(api_requests_total[1m]))) * 100 > 1
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate on the ML API"
+          description: "More than 1% of requests have failed over the last minute (current value: {{ $value }}%)."
+
+      # Alert 2: the API is responding slowly
+      - alert: SlowResponses
+        expr: histogram_quantile(0.95, sum(rate(api_request_duration_seconds_bucket{endpoint="/predict"}[1m])) by (le)) > 0.5
+        for: 30s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow responses from the ML API"
+          description: "95% of /predict requests are taking longer than 0.5 seconds (current value: {{ $value }}s)."
